@@ -24,6 +24,7 @@ import com.gabriel.hentaichat.R;
 import com.gabriel.hentaichat.mvp.LoginMVP;
 import com.gabriel.hentaichat.presenter.LoginPresenter;
 import com.gabriel.hentaichat.util.SpUtil;
+import com.gabriel.hentaichat.util.StringUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,7 +74,10 @@ public class LoginActivity extends AppCompatActivity implements LoginMVP.View {
                 String username = et_username.getText().toString();
                 String pwd = et_pwd.getText().toString();
                 if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(pwd)) {
-                    presenter.login("86-"+username, pwd);
+                    if (StringUtil.isNumeric(username)) {
+                        username = "86-" + username;
+                    }
+                    presenter.login(username, pwd);
                 } else {
                     Toast.makeText(LoginActivity.this, "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
                 }

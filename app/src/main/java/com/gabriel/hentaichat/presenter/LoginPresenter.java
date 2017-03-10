@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.gabriel.hentaichat.ConstantValues;
 import com.gabriel.hentaichat.MyApplication;
+import com.gabriel.hentaichat.model.ContactModel;
 import com.gabriel.hentaichat.model.LoginModel;
 import com.gabriel.hentaichat.mvp.LoginMVP;
 import com.gabriel.hentaichat.util.SpUtil;
@@ -170,7 +171,7 @@ public class LoginPresenter implements LoginMVP.Presenter {
             TIMUser user = new TIMUser();
             user.setAppIdAt3rd(String.valueOf(ConstantValues.SDK_APP_ID));
             user.setIdentifier(tlsUserInfo.identifier);
-            user.setAppIdAt3rd(String.valueOf(ConstantValues.ACCOUNT_TYPE));
+            user.setAccountType(String.valueOf(ConstantValues.ACCOUNT_TYPE));
             TIMManager.getInstance().login((int) ConstantValues.SDK_APP_ID,
                     user, userSig, new TIMCallBack() {
                         @Override
@@ -182,6 +183,8 @@ public class LoginPresenter implements LoginMVP.Presenter {
                         public void onSuccess() {
                             SpUtil.putString(ConstantValues.LOGIN_SIG, userSig);
                             SpUtil.putString(ConstantValues.LOGIN_IDENTIFIER, tlsUserInfo.identifier);
+                            ContactModel contactModel = new ContactModel();
+                            contactModel.getFriendList();
                             loginView.goToHome();
                         }
                     });

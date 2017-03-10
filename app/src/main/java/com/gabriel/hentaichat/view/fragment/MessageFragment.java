@@ -1,5 +1,6 @@
 package com.gabriel.hentaichat.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,16 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gabriel.hentaichat.R;
-import com.gabriel.hentaichat.adapter.ChatAdapter;
 import com.gabriel.hentaichat.adapter.MessageAdapter;
 import com.gabriel.hentaichat.mvp.MessageMVP;
 import com.tencent.TIMConversation;
-import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMMessageListener;
-import com.tencent.TIMUserProfile;
-import com.tencent.TIMValueCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +34,6 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
     @BindView(R.id.message_recycler_view)
     RecyclerView recyclerView;
     private MessageAdapter mAdapter;
-    private List<TIMMessage> mTIMMessageList;
 
     @Nullable
     @Override
@@ -49,28 +45,47 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
     }
 
     private void initView() {
-        getInfo();
-        mAdapter = new MessageAdapter(mTIMMessageList, getActivity());
+        List<TIMMessage> timMessageList = new ArrayList<>();
+        mAdapter = new MessageAdapter(timMessageList, getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        TIMManager.getInstance().addMessageListener(MessageFragment.this);
+        TIMManager.getInstance().addMessageListener(this);
     }
 
     @Override
     public boolean onNewMessages(List<TIMMessage> list) {
-        mTIMMessageList.addAll(list);
+        refreshData();
         mAdapter.notifyDataSetChanged();
         return false;
     }
 
-    private void getInfo() {
+    private void refreshData() {
         List<TIMConversation> conversionList = TIMManager.getInstance().getConversionList();
-        mTIMMessageList = new ArrayList<>();
+        List<TIMMessage> timMessageList = new ArrayList<>();
         for (TIMConversation timConversation : conversionList) {
             List<TIMMessage> lastMsgs = timConversation.getLastMsgs(1);
-            mTIMMessageList.add(lastMsgs.get(0));
+            timMessageList.add(lastMsgs.get(0));
         }
+        mAdapter.resetData(timMessageList);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TIMManager.getInstance().removeMessageListener(this);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+        mAdapter.notifyDataSetChanged();
     }
 }

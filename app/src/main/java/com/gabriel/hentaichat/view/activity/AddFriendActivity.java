@@ -1,9 +1,11 @@
 package com.gabriel.hentaichat.view.activity;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gabriel.hentaichat.R;
+import com.gabriel.hentaichat.util.StringUtil;
 import com.tencent.TIMAddFriendRequest;
 import com.tencent.TIMFriendResult;
 import com.tencent.TIMFriendshipManager;
@@ -50,8 +53,14 @@ public class AddFriendActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String id = identifier.getText().toString();
                 if (!TextUtils.isEmpty(id)) {
+                    identifier.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(identifier.getWindowToken(), 0);
                     List<String> list = new ArrayList<>();
-                    list.add("86-" + id);
+                    if (StringUtil.isNumeric(id)) {
+                        id = "86-" + id;
+                    }
+                    list.add(id);
                     TIMFriendshipManager.getInstance().getUsersProfile(list, new TIMValueCallBack<List<TIMUserProfile>>() {
                         @Override
                         public void onError(int i, String s) {

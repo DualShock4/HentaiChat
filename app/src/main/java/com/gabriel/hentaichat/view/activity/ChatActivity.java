@@ -57,6 +57,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
     private ChatAdapter mAdapter;
     private List<TIMMessage> mTimMessages;
     private float downY;
+    private boolean mIsRecording;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        mIsRecording = true;
                         downY = event.getY();
                         voice_sending.setVisibility(View.VISIBLE);
                         voice_panel.setText(getText(R.string.chat_release_send));
@@ -92,6 +94,8 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
                         }
                         break;
                     case MotionEvent.ACTION_UP:
+                        mIsRecording = false;
+                        voice_sending.setText(getText(R.string.chat_cancel_send));
                         voice_sending.setVisibility(View.GONE);
                         voice_panel.setText(getText(R.string.chat_press_talk));
                         if (downY - event.getY() > 200) {
@@ -99,6 +103,9 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
                         } else {
                             presenter.sendSoundMessage(true);
                         }
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        recordFail();
                         break;
                 }
                 return true;
@@ -155,6 +162,17 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
         return mTimMessages;
     }
 
+    @Override
+    public void recordFail() {
+        if (mIsRecording) {
+            mIsRecording = false;
+            voice_sending.setText(getText(R.string.chat_cancel_send));
+            voice_sending.setVisibility(View.GONE);
+            voice_panel.setText(getText(R.string.chat_press_talk));
+            presenter.sendSoundMessage(false);
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -188,4 +206,6 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
         }
 
     }
+
+
 }

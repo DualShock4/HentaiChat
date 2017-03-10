@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.gabriel.hentaichat.ConstantValues;
 import com.gabriel.hentaichat.MyApplication;
 import com.gabriel.hentaichat.R;
+import com.gabriel.hentaichat.model.ContactModel;
 import com.gabriel.hentaichat.util.SpUtil;
 import com.tencent.TIMCallBack;
 import com.tencent.TIMManager;
@@ -22,6 +23,13 @@ import com.tencent.tauth.Tencent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 public class SplashActivity extends Activity {
 
@@ -30,6 +38,11 @@ public class SplashActivity extends Activity {
     private static final String TAG = "SplashActivity";
 
     private static boolean firstEnter = true;
+    private Subject<Object> mObservable;
+    private final int notSend = 1;
+    private final int loginSuccess = 2;
+    private final int loginFail = 3;
+    private int mRx = notSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +64,27 @@ public class SplashActivity extends Activity {
     }
 
     private void initView() {
+        mObservable = PublishSubject.create().toSerialized();
+        TIMUser user = new TIMUser();
+        user.setAppIdAt3rd(String.valueOf(ConstantValues.SDK_APP_ID));
+        user.setIdentifier(SpUtil.getString(ConstantValues.LOGIN_IDENTIFIER, ""));
+        user.setAccountType(String.valueOf(ConstantValues.ACCOUNT_TYPE));
+        TIMManager.getInstance().login((int) ConstantValues.SDK_APP_ID,
+                user, SpUtil.getString(ConstantValues.LOGIN_SIG, ""), new TIMCallBack() {
+                    @Override
+                    public void onError(int i, final String s) {
+                        mObservable.onNext(s);
+                        mRx = loginFail;
+                    }
 
+                    @Override
+                    public void onSuccess() {
+                        ContactModel contactModel = new ContactModel();
+                        contactModel.getFriendList();
+                        mObservable.onNext("success");
+                        mRx = loginSuccess;
+                    }
+                });
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(imageView, "scaleX", 1.0f, 1.2f)
                 .setDuration(1500);
         objectAnimator.start();
@@ -71,25 +104,39 @@ public class SplashActivity extends Activity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 firstEnter = false;
-                TIMUser user = new TIMUser();
-                user.setAppIdAt3rd(String.valueOf(ConstantValues.SDK_APP_ID));
-                user.setIdentifier(SpUtil.getString(ConstantValues.LOGIN_IDENTIFIER,""));
-                user.setAppIdAt3rd(String.valueOf(ConstantValues.ACCOUNT_TYPE));
-                TIMManager.getInstance().login((int) ConstantValues.SDK_APP_ID,
-                        user, SpUtil.getString(ConstantValues.LOGIN_SIG,""), new TIMCallBack() {
-                            @Override
-                            public void onError(int i, String s) {
-                                Toast.makeText(MyApplication.getContext(), s, Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                                finish();
-                            }
+                mObservable.subscribe(new Observer<Object>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        if (mRx == loginFail) {
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            finish();
+                        } else if (mRx == loginSuccess) {
+                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+                            finish();
+                        }
+                    }
 
-                            @Override
-                            public void onSuccess() {
-                                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-                                finish();
-                            }
-                        });
+                    @Override
+                    public void onNext(Object o) {
+                        String s = (String) o;
+                        if (s.equals("success")) {
+                            startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+                        } else {
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                        }
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
             }
 
             @Override

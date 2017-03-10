@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 
 import com.gabriel.hentaichat.R;
 import com.gabriel.hentaichat.adapter.ContactAdapter;
-import com.gabriel.hentaichat.adapter.MessageAdapter;
-import com.gabriel.hentaichat.model.FriendListGet;
 import com.gabriel.hentaichat.mvp.ContactMVP;
 import com.gabriel.hentaichat.presenter.ContactPresenter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +31,7 @@ public class ContactFragment extends Fragment implements ContactMVP.View {
     @BindView(R.id.contact_recycler_view)
     RecyclerView recyclerView;
     private ContactAdapter mAdapter;
-    private FriendListGet mFriendList;
+    private List<HashMap<String, String>> mFriendList;
     private ContactMVP.Presenter presenter;
 
     @Nullable
@@ -42,12 +44,18 @@ public class ContactFragment extends Fragment implements ContactMVP.View {
     }
 
     private void initView() {
-        mFriendList = new FriendListGet();
+        mFriendList = new ArrayList<>();
         mAdapter = new ContactAdapter(getActivity(), mFriendList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         presenter = new ContactPresenter(this);
         presenter.updateFriendList(mAdapter);
+    }
+
+    @Override
+    public void updateRecyclerView(List<HashMap<String, String>> friendList) {
+        mFriendList.addAll(friendList);
+        mAdapter.notifyDataSetChanged();
     }
 }

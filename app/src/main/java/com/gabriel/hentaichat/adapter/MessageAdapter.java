@@ -125,4 +125,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             });
         }
     }
+
+    public void resetData(List<TIMMessage> timMessageList) {
+        mTIMMessageList = timMessageList;
+    }
 }

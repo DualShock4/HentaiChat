@@ -17,16 +17,20 @@ import com.gabriel.hentaichat.view.activity.ChatActivity;
 import com.gabriel.hentaichat.view.customview.CircleImageView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by gabriel on 2017/2/28.
  */
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder>{
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
-    private FriendListGet mFriendList;
+    private List<HashMap<String, String>> mFriendList;
+
     private Activity mActivity;
-    public ContactAdapter(Activity activity,FriendListGet friendList) {
+
+    public ContactAdapter(Activity activity, List<HashMap<String, String>> friendList) {
         mFriendList = friendList;
         mActivity = activity;
     }
@@ -39,22 +43,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ArrayList<FriendListGet.FriendInfo.InfoDetail> snsProfileItem = mFriendList.InfoItem.get(position).SnsProfileItem;
-        String nick = null;
-        String remark = null;
-        for (FriendListGet.FriendInfo.InfoDetail infoDetail : snsProfileItem) {
-            if (infoDetail.Tag.equals("Tag_SNS_IM_Remark")) {
-                remark = infoDetail.Value;
-            }
-            if (infoDetail.Tag.equals("Tag_Profile_IM_Nick")) {
-                nick = infoDetail.Value;
-            }
-        }
-        if (!TextUtils.isEmpty(remark)) {
-            holder.name.setText(remark);
-        } else {
-            holder.name.setText(nick);
-        }
+        HashMap<String, String> hashMap = mFriendList.get(position);
+        holder.name.setText(hashMap.get("name"));
+
     }
 
     @Override
@@ -64,12 +55,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mFriendList.FriendNum;
+        return mFriendList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         CircleImageView avatar;
         TextView name;
+
         ViewHolder(View itemView) {
             super(itemView);
             avatar = (CircleImageView) itemView.findViewById(R.id.avatar);
@@ -78,20 +70,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mActivity, ChatActivity.class);
-                    intent.putExtra(ConstantValues.FRIEND_IDENTIFIER, mFriendList.InfoItem.get(getAdapterPosition()).Info_Account);
-                    ArrayList<FriendListGet.FriendInfo.InfoDetail> snsProfileItem = mFriendList.InfoItem.get(getAdapterPosition()).SnsProfileItem;
-                    for (FriendListGet.FriendInfo.InfoDetail infoDetail : snsProfileItem) {
-                        if (infoDetail.Tag.equals("Tag_Profile_IM_Nick")) {
-                            intent.putExtra(ConstantValues.FRIEND_NAME, infoDetail.Value);
-                        }
-                    }
+                    HashMap<String, String> hashMap = mFriendList.get(getAdapterPosition());
+                    intent.putExtra(ConstantValues.FRIEND_IDENTIFIER, hashMap.get("id"));
+                    intent.putExtra(ConstantValues.FRIEND_NAME, hashMap.get("name"));
                     mActivity.startActivity(intent);
                 }
             });
         }
     }
 
-    public void updateData(FriendListGet friendList) {
-        mFriendList = friendList;
-    }
 }

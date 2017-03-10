@@ -23,7 +23,7 @@ public class SQLiteUtil {
         SQLiteOpenHelper sqLiteOpenHelper = new SQLiteOpenHelper(MyApplication.getContext(), path, null, FriendListVer) {
             @Override
             public void onCreate(SQLiteDatabase db) {
-                db.execSQL("create table friendList(identifier varchar(40), name varchar(40), remark varchar(40), team varchar(40))");
+                db.execSQL("create table friendList(identifier varchar(40) PRIMARY KEY, name varchar(40), remark varchar(40), team varchar(40))");
 //                        new Object[]{FRIEND_DB_TABLE_NAME, FRIEND_DB_IDENTIFIER, FRIEND_DB_NAME, FRIEND_DB_REMARK, FRIEND_DB_TEAM});
 //                db.execSQL("create table ?(? Integer)",new Object[]{"kkk", FRIEND_DB_IDENTIFIER });
             }

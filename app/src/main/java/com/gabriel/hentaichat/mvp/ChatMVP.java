@@ -16,6 +16,8 @@ public interface ChatMVP {
         void updateRecyclerView();
 
         List<TIMMessage> getAdapterData();
+
+        void recordFail();
     }
 
     interface Presenter {

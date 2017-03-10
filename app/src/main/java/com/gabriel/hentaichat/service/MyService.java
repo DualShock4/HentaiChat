@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class MyService extends Service {
-    private MediaPlayer mMediaPlayer;
     public MyService() {
     }
 
@@ -34,12 +33,12 @@ public class MyService extends Service {
             public boolean onNewMessages(List<TIMMessage> list) {
                 try {
                     Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-                    vibrator.vibrate(1000);
+                    vibrator.vibrate(new long[]{0, 200,200,200}, -1);
                     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                    if(mMediaPlayer == null) mMediaPlayer = new MediaPlayer();
-                    mMediaPlayer.setDataSource(getApplicationContext(), uri);
-                    mMediaPlayer.prepare();
-                    mMediaPlayer.start();
+                    MediaPlayer mediaPlayer = new MediaPlayer();
+                    mediaPlayer.setDataSource(getApplicationContext(), uri);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

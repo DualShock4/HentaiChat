@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.gabriel.hentaichat.MyApplication;
 import com.gabriel.hentaichat.mvp.ChatMVP;
-import com.gabriel.hentaichat.util.MessageEvent;
 import com.gabriel.hentaichat.util.TimeUtil;
 import com.tencent.TIMConversation;
 import com.tencent.TIMConversationType;
@@ -40,7 +39,6 @@ public class ChatPresenter implements ChatMVP.Presenter, TIMMessageListener {
         this.view = view;
         mIdentifier = identifier;
         TIMManager.getInstance().addMessageListener(this);
-        TIMManager.getInstance().addMessageListener(MessageEvent.getInstance());
         mConversation = TIMManager.getInstance().getConversation(TIMConversationType.C2C, mIdentifier);
     }
 
@@ -83,24 +81,26 @@ public class ChatPresenter implements ChatMVP.Presenter, TIMMessageListener {
 
     @Override
     public void recordSound() {
-        mRecorder = new MediaRecorder();
+        try {
+            mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mSoundPath = MyApplication.getContext().getFilesDir() + File.separator + mIdentifier +
                 "_" + TimeUtil.getTimeStr(SystemClock.currentThreadTimeMillis() / 1000);
         mRecorder.setOutputFile(mSoundPath);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try {
             mRecorder.prepare();
-        } catch (IOException e) {
-        }
+
         mRecorder.start();
-        mStartRecordeTime = SystemClock.currentThreadTimeMillis();
+            mStartRecordeTime = System.currentTimeMillis();
+        } catch (IOException e) {
+            view.recordFail();
+        }
     }
 
     @Override
     public void sendSoundMessage(boolean needToSend) {
-        long duration = (SystemClock.currentThreadTimeMillis() - mStartRecordeTime) / 1000;
+        long duration = (System.currentTimeMillis() - mStartRecordeTime) / 1000;
         if (mRecorder != null) {
             try {
                 mRecorder.stop();

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.gabriel.hentaichat.model.ContactModel;
 import com.gabriel.hentaichat.service.MyService;
 import com.tencent.TIMManager;
 

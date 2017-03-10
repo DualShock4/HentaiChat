@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ContactModel implements ContactMVP.Model {
 
     @Override
-    public void getFriendList(final ContactAdapter adapter) {
+    public void getFriendList() {
         FriendListPost post = new FriendListPost();
         post.TagList = new ArrayList<>();
         post.TagList.add("Tag_SNS_IM_Group");
@@ -44,8 +44,6 @@ public class ContactModel implements ContactMVP.Model {
                     @Override
                     public void onResponse(Call<FriendListGet> call, Response<FriendListGet> response) {
                         saveData(response.body());
-                        adapter.updateData(response.body());
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
