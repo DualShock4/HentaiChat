@@ -19,6 +19,7 @@ import com.tencent.TIMValueCallBack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -146,10 +147,18 @@ public class ChatPresenter implements ChatMVP.Presenter, TIMMessageListener {
 
     @Override
     public boolean onNewMessages(List<TIMMessage> list) {
-        view.getAdapterData().addAll(list);
+        List<TIMMessage> chatList = new ArrayList<>();
+        for (TIMMessage timMessage : list) {
+            if (mIdentifier.equals(timMessage.getConversation().getPeer())) {
+                chatList.add(timMessage);
+            }
+        }
+        if (chatList.size() == 0) {
+            return false;
+        }
+        view.getAdapterData().addAll(0, chatList);
         view.updateRecyclerView();
-        Toast.makeText(MyApplication.getContext(), "new message", Toast.LENGTH_SHORT).show();
-        return false;
+        return true;
     }
 
     @Override

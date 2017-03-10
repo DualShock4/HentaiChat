@@ -74,8 +74,6 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
         btn_send.setOnClickListener(this);
         btn_keyboard.setOnClickListener(this);
         voice_panel.setOnTouchListener(new View.OnTouchListener() {
-
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -138,7 +136,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMVP.View, Vie
         if (!TextUtils.isEmpty(name)) {
             toolbar.setTitle(name);
         } else {
-            toolbar.setTitle("未命名");
+            toolbar.setTitle(getIntent().getStringExtra(ConstantValues.FRIEND_IDENTIFIER));
         }
         setSupportActionBar(toolbar);
     }

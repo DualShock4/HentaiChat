@@ -44,7 +44,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         HashMap<String, String> hashMap = mFriendList.get(position);
-        holder.name.setText(hashMap.get("name"));
+        if (TextUtils.isEmpty(hashMap.get("name"))) {
+            holder.name.setText(hashMap.get("id"));
+        } else {
+            holder.name.setText(hashMap.get("name"));
+        }
 
     }
 

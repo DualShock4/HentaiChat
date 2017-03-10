@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gabriel.hentaichat.R;
+import com.gabriel.hentaichat.model.ContactModel;
 import com.gabriel.hentaichat.util.StringUtil;
 import com.tencent.TIMAddFriendRequest;
 import com.tencent.TIMFriendResult;
@@ -102,6 +103,8 @@ public class AddFriendActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<TIMFriendResult> timFriendResults) {
                         Toast.makeText(AddFriendActivity.this, "请求已发送", Toast.LENGTH_SHORT).show();
+                        ContactModel contactModel = new ContactModel();
+                        contactModel.getFriendList();
                     }
                 });
             }

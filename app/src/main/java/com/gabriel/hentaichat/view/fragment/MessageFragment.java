@@ -15,6 +15,7 @@ import com.gabriel.hentaichat.R;
 import com.gabriel.hentaichat.adapter.MessageAdapter;
 import com.gabriel.hentaichat.mvp.MessageMVP;
 import com.tencent.TIMConversation;
+import com.tencent.TIMConversationType;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMMessageListener;
@@ -40,6 +41,7 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
         ButterKnife.bind(this, view);
+        TIMManager.getInstance().addMessageListener(this);
         initView();
         return view;
     }
@@ -50,24 +52,26 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        TIMManager.getInstance().addMessageListener(this);
+        refreshView();
     }
 
     @Override
     public boolean onNewMessages(List<TIMMessage> list) {
-        refreshData();
-        mAdapter.notifyDataSetChanged();
-        return false;
+        initView();
+        return true;
     }
 
-    private void refreshData() {
+    private void refreshView() {
         List<TIMConversation> conversionList = TIMManager.getInstance().getConversionList();
         List<TIMMessage> timMessageList = new ArrayList<>();
         for (TIMConversation timConversation : conversionList) {
-            List<TIMMessage> lastMsgs = timConversation.getLastMsgs(1);
-            timMessageList.add(lastMsgs.get(0));
+            if (timConversation.getType() == TIMConversationType.C2C) {
+                List<TIMMessage> lastMsgs = timConversation.getLastMsgs(1);
+                timMessageList.add(lastMsgs.get(0));
+            }
         }
         mAdapter.resetData(timMessageList);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -76,16 +80,10 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
         TIMManager.getInstance().removeMessageListener(this);
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
+        initView();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshData();
-        mAdapter.notifyDataSetChanged();
-    }
 }

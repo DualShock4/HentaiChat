@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.tencent.TIMElemType;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
+import com.tencent.TIMSNSSystemElem;
+import com.tencent.TIMSNSSystemType;
 import com.tencent.TIMTextElem;
 import com.tencent.TIMUserProfile;
 import com.tencent.TIMValueCallBack;
@@ -41,7 +44,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private Activity mActivity;
     private ViewHolder viewHolder;
     private List<TIMMessage> mTIMMessageList;
-    private static final String TAG = "MessageAdapter";
 
     public MessageAdapter(List<TIMMessage> list, Activity activity) {
         mActivity = activity;
@@ -66,11 +68,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Cursor cursor = SQLiteUtil.getFriendListDb().query(SQLiteUtil.FRIEND_DB_TABLE_NAME,
                 new String[]{SQLiteUtil.FRIEND_DB_NAME}, "identifier=?",
                 new String[]{identifier}, null, null, null);
+        String name = "";
         while (cursor.moveToNext()) {
-            String name = cursor.getString(cursor.getColumnIndex(SQLiteUtil.FRIEND_DB_NAME));
-            viewHolder.name.setText(name);
+            name = cursor.getString(cursor.getColumnIndex(SQLiteUtil.FRIEND_DB_NAME));
         }
         cursor.close();
+        if (!TextUtils.isEmpty(name)) {
+            viewHolder.name.setText(name);
+        } else {
+            viewHolder.name.setText(identifier);
+        }
         viewHolder.message_time.setText(TimeUtil.getChatTimeStr(timMessage.timestamp()));
 
         if (element.getType() == TIMElemType.Text) {
