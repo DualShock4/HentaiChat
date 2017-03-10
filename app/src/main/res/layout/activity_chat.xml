@@ -32,7 +32,7 @@
         android:layout_below="@+id/toolbar" />
 
     <TextView
-        android:text="@string/chat_release_send"
+        android:text="@string/chat_cancel_send"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:textColor="#fff"
