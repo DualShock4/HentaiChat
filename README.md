@@ -4,5 +4,5 @@
 下载地址          
 </div>        
 <div align=center>         
-<img src="https://www.pgyer.com/app/qrcode/Fz2p"/>           
+<img src="https://raw.githubusercontent.com/DualShock4/HentaiChat/master/download.png"/>           
 </div>
