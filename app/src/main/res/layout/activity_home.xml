@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_home"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.gabriel.hentaichat.view.activity.HomeActivity">
+
+    <android.support.v7.widget.Toolbar
+
+        android:fitsSystemWindows="true"
+        android:background="#00dd00"
+        android:id="@+id/home_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.Toolbar>
+    <FrameLayout
+        android:layout_weight="1"
+        android:id="@+id/home_real_tab_content"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp">
+
+    </FrameLayout>
+
+    <View
+        android:background="#bbbbbb"
+        android:layout_width="match_parent"
+        android:layout_height="1px" />
+    <android.support.v4.app.FragmentTabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp">
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0" />
+    </android.support.v4.app.FragmentTabHost>
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_chat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.gabriel.hentaichat.view.activity.ChatActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#a5a5a5">
+
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <include layout="@layout/chat_input" />
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:transcriptMode="normal"
+        android:id="@+id/chat_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/frame"
+        android:layout_below="@+id/toolbar" />
+
+    <TextView
+        android:text="@string/chat_release_send"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:textSize="24sp"
+        android:visibility="gone"
+        android:background="#55999999"
+        android:id="@+id/voice_sending"
+        android:layout_width="180dp"
+        android:layout_height="180dp" />
+
+</RelativeLayout>

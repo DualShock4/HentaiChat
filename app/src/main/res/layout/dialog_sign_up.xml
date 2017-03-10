@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="#9999ff"
+        android:textSize="28sp"
+        android:text="手机验证"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="手机号码"
+            android:inputType="phone"
+            android:maxLength="11" />
+
+        <EditText
+            android:id="@+id/identifier_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="短信验证码"
+            android:inputType="number"
+            android:maxLength="4" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:clickable="true"
+                android:id="@+id/get_identifier_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:text="获取验证码" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="验证" />
+    </LinearLayout>
+</LinearLayout>
