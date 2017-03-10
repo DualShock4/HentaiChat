@@ -111,6 +111,10 @@ public class ChatPresenter implements ChatMVP.Presenter, TIMMessageListener {
         }
 
         if (needToSend) {
+            if (duration < 1) {
+                Toast.makeText(MyApplication.getContext(), "录音时间过短", Toast.LENGTH_SHORT).show();
+                return;
+            }
             TIMMessage timMessage = new TIMMessage();
             TIMSoundElem soundElem = new TIMSoundElem();
             soundElem.setPath(mSoundPath);
