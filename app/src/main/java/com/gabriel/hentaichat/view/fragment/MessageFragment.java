@@ -13,12 +13,14 @@ import android.view.ViewGroup;
 
 import com.gabriel.hentaichat.R;
 import com.gabriel.hentaichat.adapter.MessageAdapter;
+import com.gabriel.hentaichat.model.ContactModel;
 import com.gabriel.hentaichat.mvp.MessageMVP;
 import com.tencent.TIMConversation;
 import com.tencent.TIMConversationType;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMMessageListener;
+import com.tencent.TIMSNSSystemElem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
     @BindView(R.id.message_recycler_view)
     RecyclerView recyclerView;
     private MessageAdapter mAdapter;
+    private List<TIMMessage> mNewFriendList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -57,13 +60,20 @@ public class MessageFragment extends Fragment implements MessageMVP.View, TIMMes
 
     @Override
     public boolean onNewMessages(List<TIMMessage> list) {
+        mNewFriendList = new ArrayList<>();
+        for (TIMMessage timMessage : list) {
+            if (timMessage.getElement(0) instanceof TIMSNSSystemElem) {
+                mNewFriendList.add(timMessage);
+            }
+        }
         initView();
-        return true;
+        return false;
     }
 
     private void refreshView() {
         List<TIMConversation> conversionList = TIMManager.getInstance().getConversionList();
         List<TIMMessage> timMessageList = new ArrayList<>();
+        timMessageList.addAll(mNewFriendList);
         for (TIMConversation timConversation : conversionList) {
             if (timConversation.getType() == TIMConversationType.C2C) {
                 List<TIMMessage> lastMsgs = timConversation.getLastMsgs(1);

@@ -2,23 +2,33 @@ package com.gabriel.hentaichat.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Vibrator;
 
+import com.gabriel.hentaichat.MyApplication;
 import com.gabriel.hentaichat.model.ContactModel;
 import com.tencent.TIMConversationType;
+import com.tencent.TIMElemType;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMMessageListener;
+import com.tencent.TIMSNSSystemElem;
 
 import java.io.IOException;
 import java.util.List;
 
 public class MyService extends Service {
+    private Ringtone mRingtone;
+
     public MyService() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mRingtone =  RingtoneManager.getRingtone(MyApplication.getContext(), notification);
     }
 
     @Override
@@ -42,20 +52,16 @@ public class MyService extends Service {
                         //如果有系统通知，刷新好友列表
                         ContactModel contactModel = new ContactModel();
                         contactModel.getFriendList();
+                    } else if (timMessage.getElement(0) instanceof TIMSNSSystemElem) {
+                        ContactModel contactModel = new ContactModel();
+                        contactModel.getFriendList();
+                        needToNotify = true;
                     }
                 }
                 if (!needToNotify) return false;
-                try {
-                    Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-                    vibrator.vibrate(new long[]{0, 200,200,200}, -1);
-                    Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setDataSource(getApplicationContext(), uri);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(new long[]{0, 200,200,200}, -1);
+                mRingtone.play();
                 return false;
             }
         });

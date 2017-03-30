@@ -13,6 +13,7 @@ import com.gabriel.hentaichat.model.LoginModel;
 import com.gabriel.hentaichat.mvp.LoginMVP;
 import com.gabriel.hentaichat.util.SpUtil;
 import com.tencent.TIMCallBack;
+import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMUser;
 import com.tencent.tauth.IUiListener;
@@ -143,8 +144,18 @@ public class LoginPresenter implements LoginMVP.Presenter {
         }
 
         @Override
-        public void OnPwdRegCommitSuccess(TLSUserInfo tlsUserInfo) {
-            login(tlsUserInfo.identifier, pwd);
+        public void OnPwdRegCommitSuccess(final TLSUserInfo tlsUserInfo) {
+            TIMFriendshipManager.getInstance().setNickName(tlsUserInfo.identifier, new TIMCallBack() {
+                @Override
+                public void onError(int i, String s) {
+                    Toast.makeText(MyApplication.getContext(), s, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSuccess() {
+                    login(tlsUserInfo.identifier, pwd);
+                }
+            });
         }
 
         @Override

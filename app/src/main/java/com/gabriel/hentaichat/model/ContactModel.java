@@ -55,28 +55,31 @@ public class ContactModel implements ContactMVP.Model {
     }
 
     private void saveData(final FriendListGet friendListGet) {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                SQLiteDatabase friendListDb = SQLiteUtil.getFriendListDb();
-                for (FriendListGet.FriendInfo friendInfo : friendListGet.InfoItem) {
-                    ContentValues values = new ContentValues();
-                    values.put(SQLiteUtil.FRIEND_DB_IDENTIFIER, friendInfo.Info_Account);
-                    if (friendInfo.SnsProfileItem != null) {
-                        for (FriendListGet.FriendInfo.InfoDetail infoDetail : friendInfo.SnsProfileItem) {
-                            if (infoDetail.Tag.equals("Tag_Profile_IM_Nick")) {
-                                values.put(SQLiteUtil.FRIEND_DB_NAME, infoDetail.Value);
-                            } else if (infoDetail.Tag.equals("Tag_SNS_IM_Remark")) {
-                                values.put(SQLiteUtil.FRIEND_DB_REMARK, infoDetail.Value);
-                            } else if (infoDetail.Tag.equals("Tag_SNS_IM_Group")) {
-                                values.put(SQLiteUtil.FRIEND_DB_TEAM, infoDetail.Value);
+        if (friendListGet.InfoItem != null) {
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    SQLiteDatabase friendListDb = SQLiteUtil.getFriendListDb();
+
+                    for (FriendListGet.FriendInfo friendInfo : friendListGet.InfoItem) {
+                        ContentValues values = new ContentValues();
+                        values.put(SQLiteUtil.FRIEND_DB_IDENTIFIER, friendInfo.Info_Account);
+                        if (friendInfo.SnsProfileItem != null) {
+                            for (FriendListGet.FriendInfo.InfoDetail infoDetail : friendInfo.SnsProfileItem) {
+                                if (infoDetail.Tag.equals("Tag_Profile_IM_Nick")) {
+                                    values.put(SQLiteUtil.FRIEND_DB_NAME, infoDetail.Value);
+                                } else if (infoDetail.Tag.equals("Tag_SNS_IM_Remark")) {
+                                    values.put(SQLiteUtil.FRIEND_DB_REMARK, infoDetail.Value);
+                                } else if (infoDetail.Tag.equals("Tag_SNS_IM_Group")) {
+                                    values.put(SQLiteUtil.FRIEND_DB_TEAM, infoDetail.Value);
+                                }
                             }
                         }
+                        friendListDb.insert(SQLiteUtil.FRIEND_DB_TABLE_NAME, null, values);
                     }
-                    friendListDb.insert(SQLiteUtil.FRIEND_DB_TABLE_NAME, null, values);
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 }
